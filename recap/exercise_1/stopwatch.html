@@ -1,0 +1,125 @@
+<html>
+	<head>
+	
+		<style type="text/css">
+			#divContent {margin:auto;width:25%;text-align:center;}
+			#divContent ul {float:left;margin-left:50px;}
+			#divButtons {clear:both;}
+		</style>
+	
+		<script type="text/javascript">
+		
+			let savedTime;
+			let startTime;
+			let updatedTime;
+			let intervalTime;
+			let difference = 0;
+			let lapTime;
+			let laps = 0;
+			let running = false;
+			let paused = false;
+			let divTimer;
+			let ulLaps;
+			
+			function StartTimer() {		
+				
+				divTimer = (!divTimer) ? document.getElementById('divTimer') : divTimer;
+				ulLaps = (!ulLaps) ? document.getElementById('ulLaps') : ulLaps;
+			
+				if (!running) {
+					startTime = new Date().getTime();
+					intervalTime = setInterval(DisplayShowTime);
+					running = true;
+				}				
+			}
+			
+			function StopTimer() {
+				if (running) {
+					clearInterval(intervalTime);
+					savedTime = difference;
+					paused = true;
+					running = false;
+				}
+			}
+			
+			function ResetTimer() {
+				running = false;
+				paused = false;
+				startTime = null;
+				savedTime = null;
+				difference = 0
+				laps = 0;
+				clearInterval(intervalTime);
+				DisplayShowTime();
+				
+				while (ulLaps.lastElementChild) {
+					ulLaps.removeChild(ulLaps.lastElementChild);
+				}
+				
+			}
+			
+			function SetLap() {
+				
+				if (running) {
+					laps += 1;
+					const newLi = document.createElement('li');					
+					ulLaps.appendChild(newLi);				
+					DisplayShowTime(newLi, lapTime);			
+					newLi.innerText = "Lap " + laps + " " + newLi.innerText;
+					lapTime = new Date().getTime();				
+				}			
+			}
+			
+			function DisplayShowTime(target, useStartTime) {
+				
+				target = (target == undefined) ? divTimer : target;
+				useStartTime = (startTime == undefined) ? startTime : useStartTime;
+				
+				updatedTime = new Date().getTime();
+				if (savedTime) {
+					difference = (updatedTime - startTime) + savedTime;
+				} else if (startTime) {
+					difference = updatedTime - startTime;
+				} else {
+					difference = 0;
+				}
+				var hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+				var minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+				var seconds = Math.floor((difference % (1000 * 60)) / 1000);
+				var hundreths = Math.floor((difference % 1000) / 10);
+				
+				minutes = (minutes < 10) ? "0" + minutes : minutes;
+				seconds = (seconds < 10) ? "0" + seconds : seconds;
+				hundreths = (hundreths < 10) ? "0" + hundreths : hundreths;
+				
+				
+				target.innerText = minutes + ':' + seconds + ':' + hundreths;
+			}
+		
+		
+		</script>
+	</head>
+	
+	
+	<body>
+	
+		<div id="divContent">
+			<h1>Stopwatch</h1>
+			<div id="divTimer">00:00:00</div>
+			<ul id="ulLaps">
+			
+			</ul>
+			
+			<div id="divButtons">
+				<button onclick="ResetTimer()">RESET</button>
+				<button onclick="StopTimer()">STOP</button>
+				<button onclick="StartTimer()">START</button>
+				<button onclick="SetLap()">LAP</button>
+			</div>
+		</div>
+
+	</body>
+
+
+
+</html>
