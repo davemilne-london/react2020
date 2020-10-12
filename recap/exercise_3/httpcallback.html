@@ -1,0 +1,73 @@
+<html>
+
+	<head>
+		
+		<script type="text/javascript">
+			async function getDataWithCallback (url, callback) {
+				const xhttp = new XMLHttpRequest();
+				xhttp.open("GET",url);
+				xhttp.send();
+				let error='';
+				let value='';
+				xhttp.addEventListener("load", function() {
+					value = this.response;
+				});
+				xhttp.addEventListener("error", function(e) {
+					error = e.type;
+				});
+				callback(error, value);
+			}
+			
+			function getDataWithPromise (url) {
+				return new Promise(function(success, error) {
+					const xhttp = new XMLHttpRequest();
+					xhttp.open("GET",url);					
+					xhttp.onload = function() {
+						if (this.status >= 200 && this.status < 300) {
+							success(xhttp.response);
+						} else {
+							error({
+								status: this.status,
+								statusText: xhttp.statusText
+							});
+						}
+					};
+					xhttp.onerror - function() {
+						error({
+							status: this.status,
+							statusText: xhttp.statusText
+						});
+					}
+					xhttp.onerror = error;
+					xhttp.send();
+				});
+			}	
+			
+			function TestPromiseFunction() {
+				getDataWithPromise("https://jsonplaceholder.typicode.com/postsorietior")
+					.then((resp) => {console.log(resp)})
+					.catch((resp) => {console.log(`Error Code: ${resp.status} - ${resp.statusText}`)});
+			}
+			
+
+			function TestFunction() {
+				getDataWithCallback("https://jsonplaceholder.typicode.com/posts", (err, value) => {
+					if (err==''){
+						console.log(`Response: ${value}`);
+					} else {
+						console.log(`Error: ${err}`);
+					}  
+					 
+				});
+			}
+			
+		</script>
+		
+	</head>
+
+<body>
+	<button onclick="TestFunction()">TEST</button>
+	<button onclick="TestPromiseFunction()">TEST PROMISE</button>
+</body>
+
+</html>
