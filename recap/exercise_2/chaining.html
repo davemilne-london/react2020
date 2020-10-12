@@ -1,0 +1,43 @@
+<html>
+
+<head>
+
+	<script type="text/javascript">
+		
+		const add = (a,b) => a + b;
+		const subtract = (a,b) => a - b;
+		const double = a => a * 2;
+
+
+		function chain(funcs) {
+
+			for (let i=0;i<funcs.length;i++){
+			this[funcs[i].name] = funcs[i];
+		  }
+			
+		  execute = function() {
+			
+			}
+			
+			return this;
+		  
+		}
+
+		function ChainFunctions() {
+			const c = chain([add, subtract, double]);
+			//c.sum(5,3).double().subtract(10).execute();
+			//c.subtract(10,5).double().add(22).execute();
+			
+			console.log(c.add(5,3).double());
+			console.log(c.sum(5,3));
+		}
+	
+	</script>
+
+</head>
+
+<body>
+	<h1>Hello World</h1>
+	<button onclick="ChainFunctions();">Test</button>
+</body>
+</html>
